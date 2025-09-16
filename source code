@@ -1,0 +1,20 @@
+module SyncRAM (
+    input clk,
+    input we,               // Write Enable
+    input [2:0] addr,       // 3-bit address (0–7)
+    input [7:0] din,        // Data input
+    output reg [7:0] dout   // Data output
+);
+
+reg [7:0] mem [7:0];        // 8 x 8-bit memory
+
+always @(posedge clk) begin
+    if (we)
+        mem[addr] <= din;   // Write on rising edge
+end
+
+always @(*) begin
+    dout = mem[addr];       // Asynchronous read
+end
+
+endmodule

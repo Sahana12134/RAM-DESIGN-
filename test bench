@@ -1,0 +1,43 @@
+module SyncRAM_tb;
+
+reg clk;
+reg we;
+reg [2:0] addr;
+reg [7:0] din;
+wire [7:0] dout;
+
+SyncRAM uut (
+    .clk(clk),
+    .we(we),
+    .addr(addr),
+    .din(din),
+    .dout(dout)
+);
+
+// Clock generation
+initial clk = 0;
+always #5 clk = ~clk; // 10 time units clock period
+
+initial begin
+    $dumpfile("ram.vcd");
+    $dumpvars(0, SyncRAM_tb);
+
+    $display("Time\tWE\tADDR\tDIN\tDOUT");
+    $monitor("%0t\t%b\t%0d\t%h\t%h", $time, we, addr, din, dout);
+
+    // Write values
+    we = 1;
+    addr = 3'd0; din = 8'hAA; #10;
+    addr = 3'd1; din = 8'hBB; #10;
+    addr = 3'd2; din = 8'hCC; #10;
+
+    // Read values
+    we = 0;
+    addr = 3'd0; #10;
+    addr = 3'd1; #10;
+    addr = 3'd2; #10;
+
+    $finish;
+end
+
+endmodule
